@@ -10,6 +10,12 @@
   boot.supportedFilesystems = [ "ntfs" ];
   boot.blacklistedKernelModules = [ "snd_pcsp" "pcspkr" ];
 
+  # Handling of power keys
+	# don’t shutdown when power button is short-pressed
+	services.logind.extraConfig = ''
+  	HandlePowerKey=ignore
+	'';
+
   # Hostname
   networking.hostName = "nixos";
 
@@ -143,18 +149,44 @@
     pavucontrol
     pamixer
     sxiv
+    xdg-utils
     feh
     yazi
     rofimoji
   ];
 
   # Fonts
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    nerdfonts
-  ];
+  fonts = {
+    enableDefaultPackages = true;
+    packages = with pkgs; [
+      noto-fonts
+      noto-fonts-cjk
+      noto-fonts-emoji
+      nerdfonts
+    ];
+
+    fontconfig = {
+      defaultFonts = {
+        serif = [ "Noto Serif" ];
+        sansSerif = [ "Noto Sans" ];
+        monospace = [ "JetBrainsMono NF" ];
+      };
+    };
+  };
+
+  # XDG-MIME, manage default application for specific file format
+  xdg.mime = {
+	  enable = true;
+    defaultApplications = {
+			"application/pdf" = [ "firefox.desktop" ];
+			"text/html" = [ "firefox.desktop" ];
+			"video/mp4" = [ "mpv.desktop" ];
+			"video/x-matroska" = [ "mpv.desktop" ];
+			"image/gif" = [ "sxiv.desktop" ];
+			"image/jpeg" = [ "sxiv.desktop" ];
+			"image/png" = [ "sxiv.desktop" ];
+    };
+  };
 
   # System State Version
   system.stateVersion = "24.05";
