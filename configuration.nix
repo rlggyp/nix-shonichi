@@ -1,8 +1,8 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Import hardware configuration
-  imports = [ /etc/nixos/hardware-configuration.nix ];
+  imports = [ ./hardware-configuration.nix ];
 
   # Bootloader Configuration
   boot.loader.systemd-boot.enable = true;
@@ -28,9 +28,14 @@
 
   # X11 Configuration and Window Manager
   services.xserver.enable = true;
+	programs.xwayland.enable = true;
   services.xserver.displayManager.lightdm.enable = true;
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "rlggyp";
+
+  services.xserver.excludePackages = [
+    pkgs.xterm
+  ];
 
   services.xserver.windowManager.awesome = {
     enable = true;
@@ -84,13 +89,18 @@
 
   # Sound with Pipewire
   sound.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
+	services.pipewire = {
+		enable = true;
+		alsa.enable = true;
+		alsa.support32Bit = true;
+		pulse.enable = true;
+		jack.enable = true;
+		extraConfig.pipewire."99-silent-bell.conf" = { 
+			"context.properties"= {
+      	"module.x11.bell" = false;
+    	};
+		};
+	};
   security.rtkit.enable = true;
 
   # User Configuration
@@ -120,6 +130,8 @@
     neovim
     firefox
     chromium
+		obs-studio
+		python3
     git
     picom
     eza
@@ -133,7 +145,7 @@
     gnumake
     cmake
     gcc
-    kitty
+    wezterm
     tmux
     zsh
     dmenu
@@ -188,6 +200,34 @@
     };
   };
 
+	# Set environment variables
+	environment.variables = {
+		EDITOR = "nvim";
+		VISUAL = "nvim";
+		# LIBVA_DRIVER_NAME = "iHD";
+		# VDPAU_DRIVER = "va_gl";
+		# COGL_ATLAS_DEFAULT_BLIT_MODE = "framebuffer";
+	};
+
+	environment.etc."containers/policy.json".text = lib.mkAfter ''
+	{
+			"default": [
+					{
+							"type": "insecureAcceptAnything"
+					}
+			],
+			"transports":
+					{
+							"docker-daemon":
+									{
+											"": [{"type":"insecureAcceptAnything"}]
+									}
+					}
+	}
+  '';
+
   # System State Version
   system.stateVersion = "24.05";
+
+	nix.settings.experimental-features = [ "nix-command" "flakes" ];
 }
