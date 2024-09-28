@@ -122,13 +122,15 @@
 	programs.tmux = {
 		enable = true;
 		mouse = true;
-		newSession = true;
-		terminal = "screen-256color";
+		newSession = false;
+		terminal = "xterm";
 		keyMode = "vi";
 		prefix = "M-s";
 		extraConfig = ''
 			set -g base-index 1
 			setw -g pane-base-index 1
+
+			set -sa terminal-overrides ",xterm*:Tc"
 			
 			set-window-option -g mode-keys vi
 			bind-key -T copy-mode-vi v send-keys -X begin-selection
@@ -154,7 +156,7 @@
 			bind-key -r C-Down resize-pane -D 5
 			bind-key -r C-Left resize-pane -L 5
 			bind-key -r C-Right resize-pane -R 5
-			
+
 			bind-key -r f resize-pane -Z
 		'';
 		plugins = with pkgs.tmuxPlugins; [
