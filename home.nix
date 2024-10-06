@@ -5,21 +5,12 @@
   home.homeDirectory = "/home/rlggyp";
   home.stateVersion = "24.05";
 	home.packages = with pkgs; [
+    silicon
 	];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
   };
 
   # Home Manager can also manage your environment variables through
@@ -44,6 +35,7 @@
 		_JAVA_AWT_WM_NONREPARENTING = 1;
 		_JAVA_OPTIONS = "-Dawt.useSystemAAFontSettings=gasp";
 		QT_X11_NO_MITSHM = 1;
+		SSH_ASKPASS="";
   };
 
 	programs.zsh = {
@@ -54,8 +46,8 @@
 			ls = "exa";
 			l = "exa -al -g";
 			vim = "nvim";
-			cat = "bat --theme=base16 --style=plain --paging=never";
-			bat = "bat --theme=base16 --style=plain --paging=never";
+			cat = "bat --theme=tokyonight_night --style=plain --paging=never";
+			bat = "bat --theme=tokyonight_night --style=plain --paging=never";
 			rg = "rg --color=never";
 			".." = "cd ..";
 		};
@@ -127,37 +119,37 @@
 		keyMode = "vi";
 		prefix = "M-s";
 		extraConfig = ''
-			set -g base-index 1
-			setw -g pane-base-index 1
-
-			set -sa terminal-overrides ",xterm*:Tc"
-			
-			set-window-option -g mode-keys vi
-			bind-key -T copy-mode-vi v send-keys -X begin-selection
-			bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
-			bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
-			
-			set-option -g status-position bottom
-			set -g status-right ""
-			set -g status-left '#{?client_prefix,#[fg=#7aa2f7],}● '
-			
-			set-window-option -g window-status-current-format " #I "
-			set-window-option -g window-status-format " #I "
-			
-			set-option -g status-style bg='#1a1b26',fg='#1a1b26'
-			set-option -g pane-border-style fg='#7aa2f7'
-			set-option -g pane-active-border-style fg='#7aa2f7'
-			set-option -g message-style bg='#1a1b26',fg='#c0caf5'
-			set-option -g mode-style 'bg=blue,fg=black'
-			set-window-option -g window-status-current-style bg='#7aa2f7',fg='#1a1b26'
-			set-window-option -g window-status-style bg='#292e42',fg='#545c7e'
-			
-			bind-key -r C-Up resize-pane -U 5
-			bind-key -r C-Down resize-pane -D 5
-			bind-key -r C-Left resize-pane -L 5
-			bind-key -r C-Right resize-pane -R 5
-
-			bind-key -r f resize-pane -Z
+      set -g base-index 1
+      setw -g pane-base-index 1
+      
+      set -sa terminal-overrides ",xterm*:Tc"
+      
+      set-window-option -g mode-keys vi
+      bind-key -T copy-mode-vi v send-keys -X begin-selection
+      bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
+      bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
+      
+      set-option -g status-position bottom
+      set -g status-right ""
+      set -g status-left '#{?client_prefix,#[fg=#7aa2f7],}● '
+      
+      set-window-option -g window-status-current-format " #I "
+      set-window-option -g window-status-format " #I "
+      
+      set-option -g status-style bg='#1a1b26',fg='#1a1b26'
+      set-option -g pane-border-style fg='#7aa2f7'
+      set-option -g pane-active-border-style fg='#7aa2f7'
+      set-option -g message-style bg='#1a1b26',fg='#c0caf5'
+      set-option -g mode-style 'bg=blue,fg=black'
+      set-window-option -g window-status-current-style bg='#7aa2f7',fg='#1a1b26'
+      set-window-option -g window-status-style bg='#292e42',fg='#545c7e'
+      
+      bind-key -r C-Up resize-pane -U 5
+      bind-key -r C-Down resize-pane -D 5
+      bind-key -r C-Left resize-pane -L 5
+      bind-key -r C-Right resize-pane -R 5
+      
+      bind-key -r f resize-pane -Z
 		'';
 		plugins = with pkgs.tmuxPlugins; [
 			{ plugin = yank; }
@@ -169,8 +161,17 @@
 			}
 			{ plugin = sensible; }
 			{ plugin = pain-control; }
+			{ plugin = vim-tmux-navigator; }
 		];
 	};
+
+  programs.obs-studio = {
+  	enable = true;
+  	plugins = with pkgs.obs-studio-plugins; [
+  		obs-backgroundremoval
+  		obs-pipewire-audio-capture
+  	];
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
