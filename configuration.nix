@@ -187,7 +187,7 @@
   };
 
   # XDG-MIME, manage default application for specific file format
-  xdg.mime = {
+  xdg.mimeApps = {
 	  enable = true;
     defaultApplications = {
 			"application/pdf" = [ "firefox.desktop" ];
@@ -197,6 +197,8 @@
 			"image/gif" = [ "sxiv.desktop" ];
 			"image/jpeg" = [ "sxiv.desktop" ];
 			"image/png" = [ "sxiv.desktop" ];
+      "x-scheme-handler/http" = [ "firefox.desktop" ];
+      "x-scheme-handler/https" = [ "firefox.desktop" ];
     };
   };
 
